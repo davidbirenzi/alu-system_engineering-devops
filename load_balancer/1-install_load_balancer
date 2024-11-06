@@ -13,6 +13,7 @@ echo "upstream servers{
 	server 54.172.28.130;
 	server 3.90.184.33;}
 	server {
+	balance roundrobin
 	listen 80 default_server;
 	listen [::]:80 default_server;
 	location / {
