@@ -1,22 +1,22 @@
 #!/usr/bin/env bash
-<<<<<<< HEAD
+
 # install load balancer
 
 
 echo -e "Updating and doing some minor checks...\n"
 
 function install() {
-	command -v "$1" &> /dev/null
+        command -v "$1" &> /dev/null
 
-	#shellcheck disable=SC2181
-	if [ $? -ne 0 ]; then
-		echo -e "	Installing: $1\n"
-		sudo apt-get update -y -qq && \
-			sudo apt-get install -y "$1" -qq
-		echo -e "\n"
-	else
-		echo -e "	${1} is already installed.\n"
-	fi
+        #shellcheck disable=SC2181
+        if [ $? -ne 0 ]; then
+                echo -e "       Installing: $1\n"
+                sudo apt-get update -y -qq && \
+                        sudo apt-get install -y "$1" -qq
+                echo -e "\n"
+        else
+                echo -e "       ${1} is already installed.\n"
+        fi
 }
 
 install haproxy #install haproxy
@@ -35,14 +35,14 @@ defaults
   timeout server 15s
   timeout http-request 10s
 
-frontend clickviral-tech-frontend
+frontend davidbirenzi-tech-frontend
     bind *:80
-    default_backend clickviral-tech-backend
+    default_backend davidbirenzi-tech-backend
 
-backend clickviral-tech-backend
+backend davidbirenzi-tech-backend
     balance roundrobin
-    server 6278-web-01 54.172.28.130 check
-    server 6278-web-02 3.90.184.33 check
+    server 6278-web-01 54.172.28.130:80 check
+    server 6278-web-02 3.90.184.33:80 check
 "
 
 # shellcheck disable=SC2154
@@ -54,40 +54,12 @@ echo "ENABLED=1" | sudo dd status=none of=/etc/default/haproxy
 echo "configured - Roundrobin On web-01 & web-02"
 
 if [ "$(pgrep -c haproxy)" -le 0 ]; then
-	sudo service haproxy start
+        sudo service haproxy start
 else
-	sudo service haproxy restart
+        sudo service haproxy restart
 fi
 
 echo -e "web-01 web-02"
 echo "web-01"
 echo "web-02"
-=======
-#Updates the current state of the server
-#Installs Nginx on the server
-#Changes the user and user group ownership for editing file
-#overwrites the default page of nginx
-#overwrites the default configuration file default
-#add a redirection and a location for the redirection
-#restarts nginx
-apt-get -y update
-apt-get install -y nginx
-sudo chown -R "$USER":"$USER" /etc/nginx/sites-available/default
-echo "upstream servers{
-	server 54.172.28.130;
-	server 3.90.184.33;}
-	server {
-	balance roundrobin
-	listen 80 default_server;
-	listen [::]:80 default_server;
-	location / {
-		proxy_pass http://servers;
-		proxy_set_header Host $host;
-		proxy_set_header X-Real-IP $remote_addr;
-		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-		proxy_set_header X-Forwarded-Proto $scheme;}
-}" > /etc/nginx/sites-available/default
-sudo chown -R root:root /etc/nginx/sites-available/default
-sudo service nginx restart
-sudo service nginx reload
->>>>>>> d09f9fbdd3911f5b2033c6b2800c534a2cb4298c
+
